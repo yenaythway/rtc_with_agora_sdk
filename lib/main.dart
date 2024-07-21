@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rtc_with_agora_sdk/temp.dart';
+import 'package:rtc_with_agora_sdk/sign_in_page.dart';
 
 void main() {
   runApp(const MyApp());

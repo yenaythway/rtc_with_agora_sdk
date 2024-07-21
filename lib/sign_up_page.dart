@@ -3,27 +3,26 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:rtc_with_agora_sdk/custom_buttom.dart';
 import 'package:rtc_with_agora_sdk/custom_text_field.dart';
 import 'package:rtc_with_agora_sdk/extension.dart';
+import 'package:rtc_with_agora_sdk/sign_in_page.dart';
 import 'package:rtc_with_agora_sdk/super_scaffold.dart';
 
-class SignInPage extends ConsumerWidget {
-  const SignInPage({super.key});
+class SignUpPage extends ConsumerWidget {
+  const SignUpPage({super.key});
 
   @override
   Widget build(context, ref) {
-    return SafeArea(
-      child: const SuperScaffold(
+    return const SafeArea(
+      child: SuperScaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: Colors.transparent,
-        body: SignInForm(),
+        body: SignUpForm(),
       ),
     );
   }
 }
 
-class SignInForm extends ConsumerWidget {
-  const SignInForm({
-    super.key,
-  });
+class SignUpForm extends ConsumerWidget {
+  const SignUpForm({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -39,7 +38,7 @@ class SignInForm extends ConsumerWidget {
             Consumer(
               builder: (context, ref, child) {
                 // final mailError = ref.watch(loginProvider).mailError;
-                return CustomTextField(
+                return const CustomTextField(
                   labelText: "Gmail",
                   // controller: login.emailController,
                   // errorText: mailError,
@@ -47,10 +46,11 @@ class SignInForm extends ConsumerWidget {
                 );
               },
             ),
+            const SizedBox(height: 20),
             Consumer(
               builder: (context, ref, child) {
                 // final pswError = ref.watch(loginProvider).pswError;
-                return CustomTextField(
+                return const CustomTextField(
                   labelText: "Passowrd",
                   obscureText: true,
                   // errorText: pswErro/r,
@@ -59,10 +59,11 @@ class SignInForm extends ConsumerWidget {
                 );
               },
             ),
+            const SizedBox(height: 20),
             Consumer(
               builder: (context, ref, child) {
                 // final mailError = ref.watch(loginProvider).mailError;
-                return CustomTextField(
+                return const CustomTextField(
                   labelText: "Name",
                   // controller: login.emailController,
                   // errorText: mailError,
@@ -70,8 +71,9 @@ class SignInForm extends ConsumerWidget {
                 );
               },
             ),
+            const SizedBox(height: 30),
             CustomTextButton(
-              text: "Sign in",
+              text: "Sign up",
               ontap: () async {
                 if (formKey.currentState!.validate()) {
                   // if (await login.signIn()) {
@@ -85,21 +87,22 @@ class SignInForm extends ConsumerWidget {
                 }
               },
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "Don't have an account? ",
+                  "Alrady have an account? ",
                   style: context.bs!.copyWith(color: Colors.white),
                 ),
                 InkWell(
-                  onTap: () {
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => Container()));
-                  },
+                  onTap: () => Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SignInPage()),
+                      (Route<dynamic> route) => false),
                   child: Text(
-                    "Sign Up",
+                    "Sign in",
                     style: context.bs!.copyWith(color: Colors.blue),
                   ),
                 ),
