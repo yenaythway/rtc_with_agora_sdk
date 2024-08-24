@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:rtc_with_agora_sdk/all_user_page.dart';
+import 'package:rtc_with_agora_sdk/auth_provider.dart';
 import 'package:rtc_with_agora_sdk/custom_buttom.dart';
 import 'package:rtc_with_agora_sdk/custom_text_field.dart';
 import 'package:rtc_with_agora_sdk/extension.dart';
@@ -26,7 +28,7 @@ class SignUpForm extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final login = ref.read(loginProvider);
+    final login = ref.read(loginProvider);
     final formKey = GlobalKey<FormState>();
     return Form(
       key: formKey,
@@ -38,9 +40,9 @@ class SignUpForm extends ConsumerWidget {
             Consumer(
               builder: (context, ref, child) {
                 // final mailError = ref.watch(loginProvider).mailError;
-                return const CustomTextField(
-                  labelText: "Gmail",
-                  // controller: login.emailController,
+                return CustomTextField(
+                  labelText: "Phone",
+                  controller: login.phController,
                   // errorText: mailError,
                   // validator: (value) => login.validateEmail(value),
                 );
@@ -50,11 +52,11 @@ class SignUpForm extends ConsumerWidget {
             Consumer(
               builder: (context, ref, child) {
                 // final pswError = ref.watch(loginProvider).pswError;
-                return const CustomTextField(
+                return CustomTextField(
                   labelText: "Passowrd",
                   obscureText: true,
-                  // errorText: pswErro/r,
-                  // controller: login.pswController,
+                  // errorText: pswError,
+                  controller: login.pswController,
                   // validator: (value) => login.validatePassword(value),
                 );
               },
@@ -63,9 +65,9 @@ class SignUpForm extends ConsumerWidget {
             Consumer(
               builder: (context, ref, child) {
                 // final mailError = ref.watch(loginProvider).mailError;
-                return const CustomTextField(
+                return CustomTextField(
                   labelText: "Name",
-                  // controller: login.emailController,
+                  controller: login.nameController,
                   // errorText: mailError,
                   // validator: (value) => login.validateEmail(value),
                 );
@@ -75,16 +77,19 @@ class SignUpForm extends ConsumerWidget {
             CustomTextButton(
               text: "Sign up",
               ontap: () async {
-                if (formKey.currentState!.validate()) {
-                  // if (await login.signIn()) {
-                  //   login.disposeTextControllers();
-                  //   if (!context.mounted) return;
-                  //   Navigator.of(context).pushAndRemoveUntil(
-                  //       MaterialPageRoute(
-                  //           builder: (context) => const HomePage()),
-                  //       (Route<dynamic> route) => false);
-                  // }
-                }
+                bool status = await login.createChatUser();
+
+                // if (status) {
+                //   // bool isLogin =
+                //   // await
+                //   login.signIn();
+                //   // if (isLogin) {
+                //   if (!context.mounted) return;
+                //   Navigator.of(context).pushAndRemoveUntil(
+                //       MaterialPageRoute(
+                //           builder: (context) => const AllUserPage()),
+                //       (Route<dynamic> route) => false);
+                // }
               },
             ),
             const SizedBox(height: 20),
@@ -96,11 +101,16 @@ class SignUpForm extends ConsumerWidget {
                   style: context.bs!.copyWith(color: Colors.white),
                 ),
                 InkWell(
-                  onTap: () => Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const SignInPage()),
-                      (Route<dynamic> route) => false),
+                  onTap: () {
+                    login.pswController.clear();
+                    login.nameController.clear();
+                    login.phController.clear();
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const SignInPage()),
+                        (Route<dynamic> route) => false);
+                  },
                   child: Text(
                     "Sign in",
                     style: context.bs!.copyWith(color: Colors.blue),

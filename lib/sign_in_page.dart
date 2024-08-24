@@ -1,34 +1,55 @@
+import 'package:agora_chat_sdk/agora_chat_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:rtc_with_agora_sdk/AppKey/app_key.dart';
+import 'package:rtc_with_agora_sdk/all_user_page.dart';
+import 'package:rtc_with_agora_sdk/auth_provider.dart';
 import 'package:rtc_with_agora_sdk/custom_buttom.dart';
 import 'package:rtc_with_agora_sdk/custom_text_field.dart';
 import 'package:rtc_with_agora_sdk/extension.dart';
 import 'package:rtc_with_agora_sdk/sign_up_page.dart';
 import 'package:rtc_with_agora_sdk/super_scaffold.dart';
 
-class SignInPage extends ConsumerWidget {
+class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
 
   @override
-  Widget build(context, ref) {
-    return const SafeArea(
-      child: SuperScaffold(
-        resizeToAvoidBottomInset: false,
-        backgroundColor: Colors.transparent,
-        body: SignInForm(),
-      ),
+  State<SignInPage> createState() => _SignInPageState();
+}
+
+class _SignInPageState extends State<SignInPage> {
+  @override
+  void initState() {
+    initAgora();
+    super.initState();
+  }
+
+  void initAgora() async {
+    ChatOptions options = ChatOptions(
+      appKey: AgoraChatConfig.appKey,
+      autoLogin: false,
     );
+    await ChatClient.getInstance.init(options);
+    await ChatClient.getInstance.startCallback();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const SafeArea(
+        child: SuperScaffold(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.transparent,
+      body: SignInForm(),
+    ));
   }
 }
 
 class SignInForm extends ConsumerWidget {
-  const SignInForm({
-    super.key,
-  });
+  const SignInForm({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final login = ref.read(loginProvider);
+    final login = ref.read(loginProvider);
     final formKey = GlobalKey<FormState>();
     return Form(
       key: formKey,
@@ -40,9 +61,9 @@ class SignInForm extends ConsumerWidget {
             Consumer(
               builder: (context, ref, child) {
                 // final mailError = ref.watch(loginProvider).mailError;
-                return const CustomTextField(
-                  labelText: "Gmail",
-                  // controller: login.emailController,
+                return CustomTextField(
+                  labelText: "Phone",
+                  controller: login.phController,
                   // errorText: mailError,
                   // validator: (value) => login.validateEmail(value),
                 );
@@ -52,11 +73,11 @@ class SignInForm extends ConsumerWidget {
             Consumer(
               builder: (context, ref, child) {
                 // final pswError = ref.watch(loginProvider).pswError;
-                return const CustomTextField(
+                return CustomTextField(
                   labelText: "Passowrd",
                   obscureText: true,
                   // errorText: pswErro/r,
-                  // controller: login.pswController,
+                  controller: login.pswController,
                   // validator: (value) => login.validatePassword(value),
                 );
               },
@@ -65,18 +86,17 @@ class SignInForm extends ConsumerWidget {
             CustomTextButton(
               text: "Sign in",
               ontap: () async {
-                if (formKey.currentState!.validate()) {
-                  // if (await login.signIn()) {
-                  //   login.disposeTextControllers();
-                  //   if (!context.mounted) return;
-                  //   Navigator.of(context).pushAndRemoveUntil(
-                  //       MaterialPageRoute(
-                  //           builder: (context) => const HomePage()),
-                  //       (Route<dynamic> route) => false);
-                  // }
+                bool isLogin = await login.signIn();
+                if (isLogin) {
+                  if (!context.mounted) return;
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                          builder: (context) => const AllUserPage()),
+                      (Route<dynamic> route) => false);
                 }
               },
             ),
+            const SizedBox(height: 20),
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -87,6 +107,8 @@ class SignInForm extends ConsumerWidget {
                 ),
                 InkWell(
                   onTap: () {
+                    login.pswController.clear();
+                    login.nameController.clear();
                     Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(
