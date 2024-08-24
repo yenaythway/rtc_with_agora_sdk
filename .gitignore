@@ -30,7 +30,7 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
-/appInfo/
+/lib/appInfo/
 
 # Symbolication related
 app.*.symbols

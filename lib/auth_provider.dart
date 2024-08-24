@@ -4,7 +4,7 @@ import 'package:agora_chat_sdk/agora_chat_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:rtc_with_agora_sdk/AppKey/app_key.dart';
+import 'package:rtc_with_agora_sdk/appInfo/app_key.dart';
 
 final loginProvider =
     ChangeNotifierProvider<LoginProvider>((ref) => LoginProvider());
